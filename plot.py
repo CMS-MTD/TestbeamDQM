@@ -16,11 +16,11 @@ def main():
     ROOT.gROOT.SetBatch(setBatch)
     
     # Open all root files
-    #path = "root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming_ETL/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/v11/"
     path = "root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/LecroyScope/RecoData/TimingDAQRECO/RecoWithTracks/v1/"
 
 
-    runNumList = [str(x) for x in range(52463, 52476 + 1)] #lecroy
+    #runNumList = [str(x) for x in range(52507, 52520 + 1)] #lecroy
+    runNumList = [str(x) for x in range(52498, 52504 + 1)] #lecroy
     #runNumList = ["34830"] #lecroy
     print("Attempting to processes the following runs:", runNumList)
     files = [path+"run"+runNum+"_info.root" for runNum in runNumList]
@@ -32,18 +32,21 @@ def main():
 
     # Define configuration for the runs
     channels = [
-        channelInfo("0", 30.0),
-        channelInfo("1", 30.0),
-        channelInfo("2", 30.0),
-        channelInfo("3", 30.0),
-        channelInfo("4", 30.0),
-        channelInfo("5", 30.0),
-        channelInfo("6", 30.0),
-        channelInfo("7", 100.0),
+        channelInfo("0", 50.0),
+        channelInfo("1", 20.0),
+        channelInfo("2", 20.0),
+        channelInfo("3", 20.0),
+        channelInfo("4", 20.0),
+        channelInfo("5", 1000.0),
+        channelInfo("6", 10.0),
+        channelInfo("7", 150.0),
     ]
     photek=7
-    beamXRange = "100,-8.0,-2.0"
-    beamYRange = "100,8.0,13.0"
+    #beamXRange = "20, 0.0,10.0"
+    #beamYRange = "20,5.0,10.0"
+    beamXRange = "100,-10.0,15.0"
+    beamYRange = "100,-10.0,15.0"
+
             
     # Make canvas
     c = ROOT.TCanvas("c","c",len(channels)*500,1000)
@@ -60,7 +63,7 @@ def main():
     for i,ch in enumerate(channels):
         c.cd(i+1+len(channels))    
         #t.Draw("amp[{0}]>70:y_dut[0]:x_dut[0]>>h{0}(100,10.0,30.0, 100,10,30)".format(ch),"ntracks==1&&nplanes>10&&npix>1&&fabs(xResidBack)<500&&fabs(yResidBack)<500","profcolz")
-        t.Draw("amp[{0}]>{1}:y_dut[0]:x_dut[0]>>h{0}({2}, {3})".format(ch.channel,ch.ampCut,beamXRange,beamYRange),"ntracks==1&&nplanes>10&&npix>0","profcolz")
+        t.Draw("amp[{0}]>{1}:y_dut[0]:x_dut[0]>>h{0}({2}, {3})".format(ch.channel,ch.ampCut,beamXRange,beamYRange),"ntracks==1&&nplanes>0","profcolz")
         #t.Draw("amp[{0}]<50&&amp[{0}]>15:y_dut[10]:x_dut[10]>>h{0}(50,14.0,23.0, 50,17.0,26.0)".format(ch),"ntracks==1&&nplanes>10&&npix>1&&fabs(xResidBack)<500&&fabs(yResidBack)<500","profcolz")
         h = getattr(ROOT,"h{}".format(ch.channel))
         h.GetZaxis().SetRangeUser(zLow,zHigh)
@@ -87,11 +90,12 @@ def main():
         #t.Draw("LP2_20[{0}]-LP2_20[{1}]>>htemp{0}".format(ch,photek),"amp[{0}]>20&&LP2_20[{0}]!=0&&amp[{1}]>70&&amp[{1}]<150&&LP2_20[{1}]!=0".format(ch,photek))
     
         rel_amp = ""
-        if i > 1 and i < 6 :     
-            rel_amp = "&& amp[{0}] > amp[{1}] && amp[{0}] > amp[{2}]".format(ch.channel,int(ch.channel)+1,int(ch.channel)-1) 
-            print("adding rel amp {}: {}".format(ch.channel,rel_amp))
-        track = "&& npix > 0 && ntracks==1 && nplanes > 10 && chi2<30"
-        t.Draw("LP2_25[{0}]-LP2_30[{1}]>>htemp{0}(50,-11.0e-9,-10.0e-9)".format(ch.channel,photek),"amp[{0}]>{2}&&LP2_20[{0}]!=0&&amp[{1}]>70&&amp[{1}]<350&&LP2_20[{1}]!=0 {2} {3}".format(ch.channel,photek,ch.ampCut,rel_amp,track))
+        #if i > 1 and i < 6 :
+        #    rel_amp = "&& amp[{0}] > amp[{1}] && amp[{0}] > amp[{2}]".format(ch.channel,int(ch.channel)+1,int(ch.channel)-1) 
+        #    print("adding rel amp {}: {}".format(ch.channel,rel_amp))
+        track = "&& nplanes > 0"
+        t.Draw("LP2_25[{0}]-LP2_30[{1}]>>htemp{0}(50,-2.0e-9,1.0e-9)".format(ch.channel,photek),"amp[{0}]>{2}&&LP2_20[{0}]!=0&&LP2_20[{1}]!=0 {2} {3}".format(ch.channel,photek,ch.ampCut,rel_amp,track))
+        #t.Draw("LP2_25[{0}]-LP2_30[{1}]>>htemp{0}(50,-10.0e-9,0.0e-9)".format(ch.channel,photek),"amp[{0}]>{2}&&LP2_20[{0}]!=0&&amp[{1}]>70&&amp[{1}]<350&&LP2_20[{1}]!=0 {2} {3}".format(ch.channel,photek,ch.ampCut,rel_amp,track))
         h = getattr(ROOT,"htemp{}".format(ch.channel))
         ROOT.gStyle.SetOptFit(1)
         fit = ROOT.TF1("fit%s"%ch.channel, "gaus")    
@@ -130,12 +134,12 @@ def main():
     # Plot beam position: x and Y
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("y_dut[0]:x_dut[0]>>hbeam({0}, {1})".format(beamXRange,beamYRange),"ntracks==1&&nplanes>10","colz")
+    t.Draw("y_dut[0]:x_dut[0]>>hbeam({0}, {1})".format(beamXRange,beamYRange),"ntracks==1&&nplanes>0","colz")
 
     # Plot beam position: x
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("x_dut[0]>>hbeamX({0})".format(beamXRange),"ntracks==1&&nplanes>10")
+    t.Draw("x_dut[0]>>hbeamX({0})".format(beamXRange),"ntracks==1&&nplanes>0")
     hbeamX = getattr(ROOT,"hbeamX")
     fitBeamX = ROOT.TF1("fitBeamX", "gaus")    
     fitBeamX.SetLineColor(ROOT.kRed)
@@ -146,7 +150,7 @@ def main():
     # Plot beam position: y
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("y_dut[0]>>hbeamY({0})".format(beamYRange),"ntracks==1&&nplanes>10")
+    t.Draw("y_dut[0]>>hbeamY({0})".format(beamYRange),"ntracks==1&&nplanes>0")
     hbeamY = getattr(ROOT,"hbeamY")
     fitBeamY = ROOT.TF1("fitBeamY", "gaus")    
     fitBeamY.SetLineColor(ROOT.kRed)
