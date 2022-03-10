@@ -17,12 +17,13 @@ def main():
     
     # Open all root files
     #path = "root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming_ETL/KeySightScope/RecoData/TimingDAQRECO/RecoWithTracks/v11/"
-    path = "root://cmseos.fnal.gov//store/group/cmstestbeam/2021_CMSTiming_ETL/LecroyScope/RecoData/TimingDAQRECO/RecoWithTracks/v2/"
+    path = "root://cmseos.fnal.gov//store/group/cmstestbeam/SensorBeam2022/LecroyScope/RecoData/TimingDAQRECO/RecoWithTracks/v1/"
 
-    #runNumList = [str(x) for x in range(34665, 34671 + 1)] #lecroy
-    runNumList = ["34690"] #lecroy
+
+    runNumList = [str(x) for x in range(52463, 52476 + 1)] #lecroy
+    #runNumList = ["34830"] #lecroy
     print("Attempting to processes the following runs:", runNumList)
-    files = [path+"run_scope"+runNum+"_converted.root" for runNum in runNumList]
+    files = [path+"run"+runNum+"_info.root" for runNum in runNumList]
 
     # Open root file and chain them together
     t = ROOT.TChain("pulse")
@@ -152,6 +153,11 @@ def main():
     fitBeamY.Draw("same")    
     hbeamY.Fit(fitBeamY)
     fitBeamY.Draw("same")    
+
+    # Plot baseline_RMS
+    i+=1
+    c.cd(i+1+3*len(channels)); ROOT.gPad.SetLogy()
+    t.Draw("baseline_RMS","")
 
     # Save canvas as a pdf
     c.Print("dqm.pdf")
