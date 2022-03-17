@@ -20,7 +20,7 @@ def main():
 
 
     #runNumList = [str(x) for x in range(52507, 52520 + 1)] #lecroy
-    runNumList = [str(x) for x in range(55694, 55700 + 1)] #lecroy
+    runNumList = [str(x) for x in range(55671, 55700 + 1)] #lecroy
     #runNumList = ["34830"] #lecroy
     print("Attempting to processes the following runs:", runNumList)
     files = [path+"run"+runNum+"_info.root" for runNum in runNumList]
