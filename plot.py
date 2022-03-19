@@ -1,5 +1,6 @@
 import ROOT
 import time
+from sys import argv
 
 class channelInfo:
     def __init__(self,channel,ampCut):
@@ -20,7 +21,12 @@ def main():
 
 
     #runNumList = [str(x) for x in range(52507, 52520 + 1)] #lecroy
-    runNumList = [str(x) for x in range(56559, 56559 + 1)] #lecroy
+    if(len(argv)==2):
+        runNumList = [str(x) for x in range(int(argv[1]), int(argv[1]) + 1)] #lecroy
+    elif(len(argv)>2):
+        runNumList = [str(x) for x in range(int(argv[1]), int(argv[2]) + 1)] #lecroy
+    else:
+        runNumList = [str(x) for x in range(56559, 56559 + 1)] #lecroy
     #runNumList = ["34830"] #lecroy
     print("Attempting to processes the following runs:", runNumList)
     files = [path+"run"+runNum+"_info.root" for runNum in runNumList]
@@ -178,7 +184,11 @@ def main():
     print("Finished making all histograms")
     if not setBatch:
         print("Safe to close")
-        time.sleep(10**9)
+        print(time.asctime())
+        if(len(argv)<4):
+            time.sleep(10**9)
+        else:
+            time.sleep(int(argv[3]))
 
 if __name__ == '__main__':
     main()
