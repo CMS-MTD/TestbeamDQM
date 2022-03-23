@@ -10,7 +10,7 @@ exit
 fi
 while true
 do
-if [ $2==2 ];
+if [ $2 -lt 3 ];
 then
 n=$(ls /eos/uscms/store/group/cmstestbeam/SensorBeam2022/LecroyScope/RecoData/TimingDAQRECO/RecoWithTracks/v3 | tail -n $2 | sed 's/[^0-9]//g' | sed ':a;N;$!ba;s/\n/ /g')
 else
