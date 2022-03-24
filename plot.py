@@ -145,7 +145,7 @@ def main():
     # Plot beam position: x
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("x_dut[7]>>hbeamX({0})".format(beamXRange),"ntracks==1&&nplanes>0&&npix>=0")
+    t.Draw("x_dut[7]>>hbeamX({0})".format(beamXRange),"ntracks==1&&nplanes>0&&npix>0")
     hbeamX = getattr(ROOT,"hbeamX")
     fitBeamX = ROOT.TF1("fitBeamX", "gaus")    
     fitBeamX.SetLineColor(ROOT.kRed)
@@ -156,7 +156,7 @@ def main():
     # Plot beam position: y
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("y_dut[7]>>hbeamY({0})".format(beamYRange),"ntracks==1&&nplanes>0&&npix>=0")
+    t.Draw("y_dut[7]>>hbeamY({0})".format(beamYRange),"ntracks==1&&nplanes>0&&npix>0")
     hbeamY = getattr(ROOT,"hbeamY")
     fitBeamY = ROOT.TF1("fitBeamY", "gaus")    
     fitBeamY.SetLineColor(ROOT.kRed)
