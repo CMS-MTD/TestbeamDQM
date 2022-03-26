@@ -16,7 +16,7 @@ n=$(ls /eos/uscms/store/group/cmstestbeam/SensorBeam2022/LecroyScope/RecoData/Ti
 else
 n=$(ls /eos/uscms/store/group/cmstestbeam/SensorBeam2022/LecroyScope/RecoData/TimingDAQRECO/RecoWithTracks/v3 | tail -n $2 | sed 2,$(($2-1))d | sed 's/[^0-9]//g' | sed ':a;N;$!ba;s/\n/ /g')
 fi
-if [ $2==1 ];
+if [ $2 -eq 1 ];
 then
 python plot.py $n $n $(($1*60))
 else
