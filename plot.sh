@@ -22,4 +22,9 @@ python plot.py $n $n $(($1*60))
 else
 python plot.py $n $(($1*60))
 fi
+ret=$?
+if [ $ret -ne 0 ];
+then
+exit
+fi
 done
