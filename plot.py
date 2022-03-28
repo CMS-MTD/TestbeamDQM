@@ -182,12 +182,12 @@ def main():
     # Keep code open forever if you want to see the TCanvas
     print("Finished making all histograms")
     if not setBatch:
-        print("Safe to close")
         if(len(runNumList)==1):
             print("Run #: {}".format(runNumList[0]))
         else:
             print("Run # range: [{} : {}]".format(runNumList[0],runNumList[-1]))
         print(time.asctime())
+        print("Safe to close")
         if(len(argv)<4):
             time.sleep(10**9)
         else:
