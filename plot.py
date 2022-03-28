@@ -183,6 +183,10 @@ def main():
     print("Finished making all histograms")
     if not setBatch:
         print("Safe to close")
+        if(len(runNumList)==1):
+            print("Run #: {}".format(runNumList[0]))
+        else:
+            print("Run # range: [{} : {}]".format(runNumList[0],runNumList[-1]))
         print(time.asctime())
         if(len(argv)<4):
             time.sleep(10**9)
