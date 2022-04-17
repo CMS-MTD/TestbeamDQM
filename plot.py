@@ -148,7 +148,7 @@ def main():
     # Plot beam position: x
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("x_dut[7]>>hbeamX({0})".format(beamXRange),"ntracks==1&&nplanes>0&&npix>=0")
+    t.Draw("x_dut[7]>>hbeamX({0})".format(beamXRange),"ntracks==1&&nplanes>0&&npix>0")
     hbeamX = getattr(ROOT,"hbeamX")
     fitBeamX = ROOT.TF1("fitBeamX", "gaus")    
     fitBeamX.SetLineColor(ROOT.kRed)
@@ -159,7 +159,7 @@ def main():
     # Plot beam position: y
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("y_dut[7]>>hbeamY({0})".format(beamYRange),"ntracks==1&&nplanes>0&&npix>=0")
+    t.Draw("y_dut[7]>>hbeamY({0})".format(beamYRange),"ntracks==1&&nplanes>0&&npix>0")
     hbeamY = getattr(ROOT,"hbeamY")
     fitBeamY = ROOT.TF1("fitBeamY", "gaus")    
     fitBeamY.SetLineColor(ROOT.kRed)
@@ -185,8 +185,12 @@ def main():
     # Keep code open forever if you want to see the TCanvas
     print("Finished making all histograms")
     if not setBatch:
-        print("Safe to close")
+        if(len(runNumList)==1):
+            print("Run #: {}".format(runNumList[0]))
+        else:
+            print("Run # range: [{} : {}]".format(runNumList[0],runNumList[-1]))
         print(time.asctime())
+        print("Safe to close")
         if(len(argv)<4):
             time.sleep(10**9)
         else:
