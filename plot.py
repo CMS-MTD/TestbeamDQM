@@ -39,21 +39,19 @@ def main():
 
     # Define configuration for the runs
     channels = [
-        channelInfo("0", 20.0),
-        channelInfo("1", 20.0),
-        channelInfo("2", 20.0),
-        channelInfo("3", 20.0),
-        channelInfo("4", 20.0),
-        channelInfo("5", 20.0),
-        channelInfo("6", 20.0),
+        channelInfo("0", 40.0),
+        channelInfo("1", 40.0),
+        channelInfo("2", 40.0),
+        channelInfo("3", 40.0),
+        channelInfo("4", 40.0),
+        channelInfo("5", 40.0),
+        channelInfo("6", 40.0),
         channelInfo("7", 50.0),
     ]
     photek=7
-    #beamXRange = "200, -2.0,10.0"
-    #beamYRange = "200,  0.0,12.0"
-    beamXRange = "100, -14.0, 11.0"
-    beamYRange = "100, -14.0, 11.0"
-            
+    beamXRange = "300, -2.5,  0.5"
+    beamYRange = "300, -3.8, -0.8"
+
     # Make canvas
     c = ROOT.TCanvas("c","c",len(channels)*500,1000)
     c.Divide(len(channels), 4)
@@ -96,11 +94,15 @@ def main():
         #t.Draw("LP2_20[{0}]-LP2_20[{1}]>>htemp{0}".format(ch,photek),"amp[{0}]>20&&LP2_20[{0}]!=0&&amp[{1}]>70&&amp[{1}]<150&&LP2_20[{1}]!=0".format(ch,photek))
     
         rel_amp = ""
-        if i > 1 and i < 6 :
+        if i >= 1 and i <= 5 :
             rel_amp = "&& amp[{0}] > amp[{1}] && amp[{0}] > amp[{2}]".format(ch.channel,int(ch.channel)+1,int(ch.channel)-1) 
+        elif i == 0:
+            rel_amp = "&& amp[{0}] > amp[{1}]".format(ch.channel,int(ch.channel)+1)
+        elif i == 6:
+            rel_amp = "&& amp[{0}] > amp[{1}]".format(ch.channel,int(ch.channel)-1) 
         #    print("adding rel amp {}: {}".format(ch.channel,rel_amp))
         #rel_amp+="&&x_dut[7]>-4.5&&x_dut[7]<-4.0"
-        track = "&& nplanes > 0 && npix > 0"
+        track = "&& nplanes >= 10 && npix >= 4"
         t.Draw("LP2_50[{0}]-LP2_30[{1}]>>htemp{0}(50,-1.2e-9,0.0e-9)".format(ch.channel,photek),"amp[{0}]>{2}&&LP2_50[{0}]!=0&&LP2_20[{1}]!=0 {3} {4}".format(ch.channel,photek,ch.ampCut,rel_amp,track))
         #t.Draw("LP2_25[{0}]-LP2_30[{1}]>>htemp{0}(50,-10.0e-9,0.0e-9)".format(ch.channel,photek),"amp[{0}]>{2}&&LP2_20[{0}]!=0&&amp[{1}]>70&&amp[{1}]<350&&LP2_20[{1}]!=0 {2} {3}".format(ch.channel,photek,ch.ampCut,rel_amp,track))
         h = getattr(ROOT,"htemp{}".format(ch.channel))
