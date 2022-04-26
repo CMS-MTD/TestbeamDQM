@@ -48,9 +48,12 @@ def main():
         channelInfo("6", 20.0),
         channelInfo("7", 50.0),
     ]
+    i_dut=7
     photek=7
-    beamXRange = "200, -6.0,  0.0"
-    beamYRange = "200, -6.0,  0.0"
+#   beamXRange = "100, -10,  -10"
+#   beamYRange = "100, -10,  10"
+    beamXRange = "100, -5.0,  -2.0"
+    beamYRange = "100, -4.2,  -1.2"
 
     # Make canvas
     c = ROOT.TCanvas("c","c",len(channels)*500,1000)
@@ -63,7 +66,7 @@ def main():
     myt.SetTextColor(ROOT.kRed)
     for i,ch in enumerate(channels):
         c.cd(i+1); ROOT.gPad.SetLogy()
-        t.Draw("amp[{0}]>>hamp{0}"         .format(ch.channel),"amp[7]>{}".format(channels[7].ampCut),"")
+        t.Draw("amp[{0}]>>hamp{0}".format(ch.channel),"amp[7]>{}".format(channels[7].ampCut),"")
         t.Draw("100*baseline_RMS[{0}]>>hRMS{0}".format(ch.channel),"amp[7]>{}".format(channels[7].ampCut),"")
         h1 = getattr(ROOT,"hamp{}".format(ch.channel))
         h2 = getattr(ROOT,"hRMS{}".format(ch.channel))
@@ -78,8 +81,8 @@ def main():
     zHigh = 1.0
     for i,ch in enumerate(channels):
         c.cd(i+1+len(channels))    
-        #t.Draw("amp[{0}]>70:y_dut[9]:x_dut[9]>>h{0}(100,10.0,30.0, 100,10,30)".format(ch),"ntracks==1&&nplanes>10&&npix>1&&fabs(xResidBack)<500&&fabs(yResidBack)<500","profcolz")
-        t.Draw("amp[{0}]>{1}:y_dut[10]:x_dut[10]>>h{0}({2}, {3})".format(ch.channel,ch.ampCut,beamXRange,beamYRange),"nplanes>=8&&npix>=4&&nback==2&&xResidBack>0.0&&xResidBack<500&&yResidBack>0.0&&yResidBack<500.0&&fabs(xSlope)<0.001&&fabs(ySlope)<0.001","profcolz")
+        #t.Draw("amp[{0}]>70:y_dut[{1}]:x_dut[{1}]>>h{0}(100,10.0,30.0, 100,10,30)".format(ch,i_dut),"ntracks==1&&nplanes>10&&npix>1&&fabs(xResidBack)<500&&fabs(yResidBack)<500","profcolz")
+        t.Draw("amp[{0}]>{1}:y_dut[{4}]:x_dut[{4}]>>h{0}({2}, {3})".format(ch.channel,ch.ampCut,beamXRange,beamYRange,i_dut),"nplanes>=8&&npix>=4","profcolz") 
         #t.Draw("amp[{0}]<50&&amp[{0}]>15:y_dut[10]:x_dut[10]>>h{0}(50,14.0,23.0, 50,17.0,26.0)".format(ch),"ntracks==1&&nplanes>10&&npix>1&&fabs(xResidBack)<500&&fabs(yResidBack)<500","profcolz")
         h = getattr(ROOT,"h{}".format(ch.channel))
         h.GetZaxis().SetRangeUser(zLow,zHigh)
@@ -91,8 +94,8 @@ def main():
     #c.cd()
     #hists=[]
     #for i,ch in enumerate(channels):
-    #    hname  = "amp[{}]>{}:x_dut[9]".format(ch.channel,ch.ampCut)
-    #    yrange = "y_dut[9]>{} && y_dut[9]<{}".format(min_y,max_y)
+    #    hname  = "amp[{0}]>{1}:x_dut[{2}]".format(ch.channel,ch.ampCut,i_dut)
+    #    yrange = "y_dut[{2}]>{0} && y_dut[{2}]<{1}".format(min_y,max_y,i_dut)
     #    sel = yrange + track
     #    t.Draw(hname,sel,"prof")
     #    h = getattr(ROOT,"htemp{}".format(ch.channel))
@@ -113,7 +116,7 @@ def main():
         #elif i == 6:
         #    rel_amp = "&& amp[{0}] > amp[{1}]".format(ch.channel,int(ch.channel)-1) 
         #    print("adding rel amp {}: {}".format(ch.channel,rel_amp))
-        #rel_amp+="&&x_dut[9]>-4.5&&x_dut[9]<-4.0"
+        #rel_amp+="&&x_dut[{0}]>-4.5&&x_dut[{0}]<-4.0".format(i_dut)
         track = "&& nplanes >= 10 && npix >= 4"
         t.Draw("LP2_50[{0}]-LP2_30[{1}]>>htemp{0}(50, 3.9e-9, 5.0e-9)".format(ch.channel,photek),"amp[{0}]>{2}&&LP2_50[{0}]!=0&&LP2_20[{1}]!=0 {3} {4}".format(ch.channel,photek,ch.ampCut,rel_amp,track))
         #t.Draw("LP2_25[{0}]-LP2_30[{1}]>>htemp{0}(50,-10.0e-9,0.0e-9)".format(ch.channel,photek),"amp[{0}]>{2}&&LP2_20[{0}]!=0&&amp[{1}]>70&&amp[{1}]<350&&LP2_20[{1}]!=0 {2} {3}".format(ch.channel,photek,ch.ampCut,rel_amp,track))
@@ -155,12 +158,12 @@ def main():
     # Plot beam position: x and Y
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("y_dut[9]:x_dut[9]>>hbeam({0}, {1})".format(beamXRange,beamYRange),"ntracks==1&&nplanes>0&&npix>0","colz")
+    t.Draw("y_dut[{2}]:x_dut[{2}]>>hbeam({0}, {1})".format(beamXRange,beamYRange,i_dut),"ntracks==1&&nplanes>0&&npix>0","colz")
 
     # Plot beam position: x
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("x_dut[9]>>hbeamX({0})".format(beamXRange),"ntracks==1&&nplanes>0&&npix>0")
+    t.Draw("x_dut[{1}]>>hbeamX({0})".format(beamXRange,i_dut),"ntracks==1&&nplanes>0&&npix>0")
     hbeamX = getattr(ROOT,"hbeamX")
     fitBeamX = ROOT.TF1("fitBeamX", "gaus")    
     fitBeamX.SetLineColor(ROOT.kRed)
@@ -171,7 +174,7 @@ def main():
     # Plot beam position: y
     i+=1
     c.cd(i+1+3*len(channels))
-    t.Draw("y_dut[9]>>hbeamY({0})".format(beamYRange),"ntracks==1&&nplanes>0&&npix>0")
+    t.Draw("y_dut[{1}]>>hbeamY({0})".format(beamYRange,i_dut),"ntracks==1&&nplanes>0&&npix>0")
     hbeamY = getattr(ROOT,"hbeamY")
     fitBeamY = ROOT.TF1("fitBeamY", "gaus")    
     fitBeamY.SetLineColor(ROOT.kRed)
@@ -187,7 +190,7 @@ def main():
     # Plot nPix as a function of tracker position
     i+=1
     c.cd(i+1+3*len(channels));
-    t.Draw("npix:y_dut[9]:x_dut[9]>>hpix({0}, {1}".format(beamXRange,beamYRange),"ntracks==1&&nplanes>0","profcolz")
+    t.Draw("npix:y_dut[{2}]:x_dut[{2}]>>hpix({0}, {1}".format(beamXRange,beamYRange,i_dut),"ntracks==1&&nplanes>0","profcolz")
     hpix = getattr(ROOT,"hpix")
     hpix.GetZaxis().SetRangeUser(0.0,4.0)
 
