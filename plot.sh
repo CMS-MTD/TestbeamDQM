@@ -1,4 +1,5 @@
 #!/bin/bash
+#test
 P="/eos/uscms/store/group/cmstestbeam/SensorBeam2022/LecroyScope/RecoData/TimingDAQRECO/RecoWithTracks/v10"
 if [ "$1" == "" ] || [ "$2" == "" ]; then
 echo "## PLOTTER.SH - WATCH SCRIPT FOR DQM PLOTS ##"
